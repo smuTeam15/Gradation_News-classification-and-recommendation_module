@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[5]:
-
-
 # This Python 3 environment comes with many helpful analytics libraries installed
 # It is defined by the kaggle/python docker image: https://github.com/kaggle/docker-python
 # For example, here's several helpful packages to load in 
@@ -43,38 +40,18 @@ import os
 
 
 # # prepare data
-
-# In[6]:
-
-
 df = pd.read_json('News_Category_Dataset_v2.json', lines=True)
 df.head()
-
-
-# In[7]:
-
 
 cates = df.groupby('category')
 print("total categories: ", cates.ngroups)
 print(cates.size())
 
-
-# In[8]:
-
-
 # THE WORLDPOST and WORLDPOST should be the same category, so merge them.
 df.category = df.category.map(lambda x: "WORDPOST" if x == "THE WORLDPOST" else x)
 
-
-# In[9]:
-
-
 # using headlines and short_description as input X
 df['text'] = df.headline + " " + df.short_description
-
-
-# In[10]:
-
 
 # tokenizing
 tokenizer = Tokenizer()
@@ -82,33 +59,17 @@ tokenizer.fit_on_texts(df.text)
 X = tokenizer.texts_to_sequences(df.text)
 df['words'] = X
 
-
-# In[11]:
-
-
 # delete some empty and short data
 df['word_length'] = df.words.apply(lambda i: len(i))
 df = df[df.word_length >= 5]
 
 df.head()
 
-
-# In[8]:
-
-
 df.word_length.describe()
-
-
-# In[9]:
-
 
 # using 50 for padding length
 maxlen = 50
 X = list(sequence.pad_sequences(df.words, maxlen=maxlen))
-
-
-# In[12]:
-
 
 # category to id
 categories = df.groupby('category').size().index.tolist()
@@ -119,12 +80,6 @@ for i, k in enumerate(categories):
     int_category.update({i:k})
 
 df['c2id'] = df['category'].apply(lambda x: category_int[x])
-
-
-# # glove embedding
-
-# In[20]:
-
 
 word_index = tokenizer.word_index
 
@@ -143,9 +98,6 @@ print('Found %s unique tokens.' % len(word_index))
 print('Total %s word vectors.' % len(embeddings_index))
 
 
-# In[21]:
-
-
 embedding_matrix = np.zeros((len(word_index) + 1, EMBEDDING_DIM))
 for word, i in word_index.items():
     embedding_vector = embeddings_index.get(word)
@@ -158,12 +110,7 @@ embedding_layer = Embedding(len(word_index)+1,
                             input_length = maxlen, 
                             trainable=False)
 
-
 # # split dataset
-
-# In[22]:
-
-
 # prepared data
 
 X = np.array(X)
@@ -175,10 +122,6 @@ x_train, x_val, y_train, y_val = train_test_split(X, Y, test_size=0.2, random_st
 
 
 # # Bidirectional GRU + Conv
-
-# In[23]:
-
-
 # Bidrectional LSTM with convolution
 # from https://www.kaggle.com/eashish/bidirectional-gru-with-convolution
 
@@ -197,10 +140,6 @@ BiGRU.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['acc']
 
 BiGRU.summary()
 
-
-# In[24]:
-
-
 # training
 bigru_history = BiGRU.fit(x_train,
                          y_train,
@@ -208,15 +147,7 @@ bigru_history = BiGRU.fit(x_train,
                          epochs=20,
                          validation_data=(x_val, y_val))
 
-
-# In[28]:
-
-
 pip install newsapi-python
-
-
-# In[30]:
-
 
 from newsapi import NewsApiClient
 # Init
@@ -227,78 +158,30 @@ top_headlines = newsapi.get_top_headlines(category='business',
                                           language='en',
                                           country='us')
 
-
-# In[31]:
-
-
 top_headlines
 
-
-# In[73]:
-
-
 df = pd.DataFrame(top_headlines['articles'])
-
-
-# In[74]:
-
-
-df.head(3)
-
-
-# In[91]:
-
 
 df['text'] = df.description + " " + df.title
 drop_df = df.dropna(axis=0)
 df = drop_df
 df
 
-
-# In[92]:
-
-
 tokenizer = Tokenizer()
 tokenizer.fit_on_texts(df.text)
 X = tokenizer.texts_to_sequences(df.text)
 df['words'] = X
 
-
-# In[93]:
-
-
-df
-
-
-# In[94]:
-
-
 df['word_length'] = df.words.apply(lambda i: len(i))
 df = df[df.word_length >= 5]
 df.head()
 
-
-# In[95]:
-
-
 df.word_length.describe()
-
-
-# In[96]:
-
 
 X = list(sequence.pad_sequences(df.words, maxlen=maxlen))
 X = np.array(X)
 
-
-# In[97]:
-
-
 cate = BiGRU.predict(X)
-
-
-# In[98]:
-
 
 cate_list = []
 for i in range(len(cate)):
@@ -306,9 +189,6 @@ for i in range(len(cate)):
     p = np.argmax(y)
     cate_list.append(int_category[p])
     print(int_category[p])
-
-
-# In[99]:
 
 
 cate_list
