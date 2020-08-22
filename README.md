@@ -1,5 +1,7 @@
 # News-Category-Classifier-
-This project references 'https://www.kaggle.com/hengzheng/news-category-classifier-val-acc-0-65'.
+This module is a part of cultural exchange social media service 'Gradation' for recommending a weekly conversation topic.
+
+This module references 'https://www.kaggle.com/hengzheng/news-category-classifier-val-acc-0-65'.
 
 This project is news category classifiying and recommendation program.
 Using 'News API' for crawling news and put it in to the classification model.
