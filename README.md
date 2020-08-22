@@ -1,4 +1,4 @@
-# News-Category-Classifier-
+# News-Category-Classifier
 This module is a part of cultural exchange social media service 'Gradation' for recommending a weekly conversation topic.
 It crawling the news and recommends the news among them which takes top rated score that matched with user given category.
 
