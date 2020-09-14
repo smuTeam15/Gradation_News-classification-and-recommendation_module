@@ -1,5 +1,5 @@
 # News-Category-Classifier
-This module is a part of cultural exchange social media service 'Gradation' for recommending a weekly conversation topic.
+This module is a part of cultural exchange social media service 'Gradation'(https://github.com/smuTeam15) for recommending a weekly conversation topic.
 It crawling the news and recommends the news among them which takes top rated score that matched with user given category.
 
 This project is news category classifiying and recommendation program.
